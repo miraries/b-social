@@ -5,6 +5,7 @@ const { models } = require('../db');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const passport = require('passport');
+const tokenRevoked = require('./middleware/tokenRevoked')
 const morgan = require('morgan')
 const helmet = require('helmet')
 const strategyFactory = require('./common/passport')
@@ -30,6 +31,7 @@ const jwt = async (payload, done) => {
 
 app.use(passport.initialize());
 passport.use('jwt', strategyFactory());
+app.use(tokenRevoked);
 
 app.use('/api/auth', auth);
 app.use(bodyParser.urlencoded({ extended: true }));
