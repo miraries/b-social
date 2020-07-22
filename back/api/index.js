@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const auth = require('./routes/auth.routes');
-const { models } = require('../db');
-const JwtStrategy = require('passport-jwt').Strategy;
+const posts = require('./routes/posts.routes');
+const comments = require('./routes/comments.routes');
 const passport = require('passport');
 const tokenRevoked = require('./middleware/tokenRevoked')
 const morgan = require('morgan')
@@ -23,9 +23,10 @@ passport.use('jwt', strategyFactory());
 app.use(tokenRevoked);
 
 app.use('/api/auth', auth);
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api/posts', passport.authenticate('jwt', {session: false}), posts);
 
-app.use('/auth', auth);
+// Use use same route since these are subroutes
+app.use('/api/posts', passport.authenticate('jwt', {session: false}), comments);
 
 app.use(notFound)
 app.use(printStack)
