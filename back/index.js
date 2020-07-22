@@ -1,7 +1,8 @@
+require('dotenv').config()
 const sequelize = require('./db');
 const express = require('./api');
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 async function connectDatabase() {
     try {

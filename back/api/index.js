@@ -5,13 +5,17 @@ const { models } = require('../db');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { ExtractJwt } = require('passport-jwt');
 const passport = require('passport');
+const morgan = require('morgan')
+const helmet = require('helmet')
+const { notFound, printStack } = require('./middleware/errorHandle')
 
 const app = express();
 
-const jwtOptions = {
-    secretOrKey: '4398herg984erifdifgv',
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
-};
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(morgan('common'));
+app.use(helmet());
+// app.use(cors({ origin: process.env.CORS_ORIGIN}));
 
 const jwt = async (payload, done) => {
     try {
