@@ -1,4 +1,4 @@
-const { DataTypes, Sequelize } = require('sequelize');
+const {DataTypes, Sequelize} = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jwt-simple');
 const moment = require('moment-timezone')
@@ -22,7 +22,7 @@ const User = sequelize.define('user', {
         allowNull: false,
         type: DataTypes.STRING,
         unique: true
-    },
+    }
 });
 
 const Post = sequelize.define('post', {
@@ -39,55 +39,58 @@ const Comment = sequelize.define('comment', {
     }
 });
 
-User.hasMany(Post);
-Post.belongsTo(User);
-
-Post.hasMany(Comment);
-Comment.belongsTo(Post);
-
-User.belongsToMany(User, { as: 'followers', through: 'user_followers' })
-
-User.findAndGenerateToken = async function(options) {
-    const { email, password, refreshObject } = options;
-
-    const user = await this.findOne({ email }).exec();
-    const err = {
-        status: httpStatus.UNAUTHORIZED,
-        isPublic: true,
-    };
-    if (password) {
-        if (user && await user.passwordMatches(password)) {
-            return { user, accessToken: user.token() };
-        }
-        err.message = 'Incorrect email or password';
-    } else if (refreshObject && refreshObject.userEmail === email) {
-        if (moment(refreshObject.expires).isBefore()) {
-            err.message = 'Invalid refresh token.';
-        } else {
-            return { user, accessToken: user.token() };
-        }
-    } else {
-        err.message = 'Incorrect email or refreshToken';
+const foreignKeyOption = {
+    foreignKey: {
+        allowNull: false
     }
-    throw err;
 }
 
-User.passwordMatches = async function(password) {
+User.hasMany(Post, foreignKeyOption);
+Post.belongsTo(User);
+
+Post.hasMany(Comment, foreignKeyOption);
+Comment.belongsTo(Post);
+
+User.hasMany(Comment, foreignKeyOption);
+Comment.belongsTo(User);
+
+User.belongsToMany(User, {as: 'followers', through: 'user_followers', ...foreignKeyOption})
+
+User.findAndGenerateToken = async function (options) {
+    const {email, password} = options;
+
+    const user = await this.findOne({where: {email}});
+    let message = ''
+
+    if (user && await user.passwordMatches(password)) {
+        return {user, token: user.token()};
+    }
+
+    throw 'Incorrect email or password';
+}
+
+User.prototype.passwordMatches = async function (password) {
     return bcrypt.compare(password, this.password);
 }
 
-User.addHook('beforeCreate', async (user, options) => {
-    const hash = await bcrypt.hash(user.password, 10);
-    user.password = hash;
-});
+User.prototype.toJSON = function () {
+    const { password, ...user } = this.dataValues
 
-User.prototype.token = function() {
-    const playload = {
+    return user
+}
+
+
+User.prototype.token = function () {
+    const payload = {
         exp: moment().add(1440, 'minutes').unix(),
         iat: moment().unix(),
-        sub: this._id,
+        sub: this.id,
     };
-    return jwt.encode(playload, '498heri98eriodf49reoidjf');
+    return jwt.encode(payload, process.env.JWT_SECRET);
 }
+
+User.addHook('beforeCreate', async (user, options) => {
+    user.password = await bcrypt.hash(user.password, 10);
+});
 
 module.exports = sequelize;
