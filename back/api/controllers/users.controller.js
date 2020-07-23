@@ -7,6 +7,10 @@ const index = async function (req, res, next) {
     return res.json(users)
 }
 
+const profile = async function (req, res, next) {
+    return res.json(req.user);
+}
+
 const show = async function (req, res, next) {
     // TODO
 }
@@ -64,6 +68,7 @@ const unfollow = async function (req, res, next) { //TODO: Refactor
 }
 
 module.exports = {
+    profile,
     index,
     follow,
     unfollow

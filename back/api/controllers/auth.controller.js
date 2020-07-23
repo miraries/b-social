@@ -2,7 +2,6 @@ const httpStatus = require('http-status');
 const { models } = require('../../db');
 const { revoke } = require("../common/redis")
 
-
 const validators = require('../validations/auth.validations');
 
 const register = async function (req, res, next) {
@@ -40,7 +39,6 @@ const login = async function (req, res, next) {
 }
 
 const logout = async function (req, res, next) {
-    console.log('authenticated', req.isAuthenticated())
     await revoke(req.headers.authorization.replace('Bearer ', ''))
 
     return res.json({ message: 'Logged out successfully'});
