@@ -3,10 +3,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jwt-simple');
 const moment = require('moment-timezone')
 
-const sequelize = new Sequelize('bsocial', 'root', 'root', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const sequelize = new Sequelize(
+    env.process.DB,
+    env.process.DB_USER,
+    env.process.DB_PASSWORD,
+    {
+        host: env.process.DB_HOST,
+        dialect: 'mysql'
+    }
+);
 
 const User = sequelize.define('user', {
     name: {
