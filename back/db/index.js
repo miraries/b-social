@@ -4,11 +4,11 @@ const jwt = require('jwt-simple');
 const moment = require('moment-timezone')
 
 const sequelize = new Sequelize(
-    env.process.DB,
-    env.process.DB_USER,
-    env.process.DB_PASSWORD,
+    process.env.DB,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-        host: env.process.DB_HOST,
+        host: process.env.DB_HOST,
         dialect: 'mysql'
     }
 );
