@@ -54,7 +54,8 @@ Comment.belongsTo(Post);
 User.hasMany(Comment, foreignKeyOption);
 Comment.belongsTo(User);
 
-User.belongsToMany(User, {as: 'followers', through: 'user_followers', ...foreignKeyOption})
+User.belongsToMany(User, {as: 'followers', through: 'user_followers', foreignKey: 'userId'})
+User.belongsToMany(User, {as: 'following', through: 'user_followers', foreignKey: 'followerId'})
 
 User.findAndGenerateToken = async function (options) {
     const {email, password} = options;
