@@ -2,20 +2,38 @@ const httpStatus = require('http-status');
 const {models} = require('../../db');
 const validators = require('../validations/post.validations');
 
-
 const index = async function (req, res, next) {
+    const all = req.query.all === 'true'
     const page = req.query.page || 0
 
-    const posts = await models.post.findAll({
-        offset: page * 5,
-        limit: 5
-    })
+    const scope = all ? {} : {
+        method: ['fromFollowed', req.user.id],
+    };
 
-    return res.json(posts)
+    const {count, rows} = await models.post
+        .scope(scope)
+        .findAndCountAll({
+            offset: page * 5,
+            limit: 5,
+            raw: true,
+            nest: true
+        });
+
+    return res.json({
+        count,
+        data: all ? rows : rows.map(({user, ...post}) => post)
+    });
 }
 
 const show = async function (req, res, next) {
-    // TODO
+    const post = await models.post.findByPk(req.params.id, {include: 'comments'})
+
+    if (!post) {
+        res.status(httpStatus.NOT_FOUND)
+        return res.json({error: 'No post with that id'});
+    }
+
+    return res.json(post.comments);
 }
 
 const create = async function (req, res, next) {

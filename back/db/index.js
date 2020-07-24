@@ -3,10 +3,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jwt-simple');
 const moment = require('moment-timezone')
 
-const sequelize = new Sequelize('bsocial', 'root', 'root', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const sequelize = new Sequelize(
+    process.env.DB,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+        host: process.env.DB_HOST,
+        dialect: 'mysql'
+    }
+);
 
 const User = sequelize.define('user', {
     name: {
@@ -45,6 +50,8 @@ const foreignKeyOption = {
     }
 }
 
+const UserFollow = sequelize.define('UserFollow');
+
 User.hasMany(Post, foreignKeyOption);
 Post.belongsTo(User);
 
@@ -54,7 +61,8 @@ Comment.belongsTo(Post);
 User.hasMany(Comment, foreignKeyOption);
 Comment.belongsTo(User);
 
-User.belongsToMany(User, {as: 'followers', through: 'user_followers', ...foreignKeyOption})
+User.belongsToMany(User, {as: 'followers', through: UserFollow, foreignKey: 'followedId'})
+User.belongsToMany(User, {as: 'following', through: UserFollow, foreignKey: 'followerId'})
 
 User.findAndGenerateToken = async function (options) {
     const {email, password} = options;
@@ -74,15 +82,14 @@ User.prototype.passwordMatches = async function (password) {
 }
 
 User.prototype.toJSON = function () {
-    const { password, ...user } = this.dataValues
+    const {password, ...user} = this.dataValues
 
     return user
 }
 
-
 User.prototype.token = function () {
     const payload = {
-        exp: moment().add(1440, 'minutes').unix(),
+        exp: moment().add(process.env.JWT_TTL, 'minutes').unix(),
         iat: moment().unix(),
         sub: this.id,
     };
@@ -92,5 +99,24 @@ User.prototype.token = function () {
 User.addHook('beforeCreate', async (user, options) => {
     user.password = await bcrypt.hash(user.password, 10);
 });
+
+Post.prototype.isByFollowed = function (userId) {
+    this.getFollowers({where: {user: userId}})
+};
+
+Post.addScope('fromFollowed', userId => ({
+    include: {
+        model: User,
+        include: {
+            model: User,
+            as: 'followers',
+            where: {
+                id: userId
+            },
+            through: {attributes: []}
+        },
+        required: true
+    }
+}));
 
 module.exports = sequelize;

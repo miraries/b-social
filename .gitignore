@@ -2,3 +2,5 @@
 .idea/
 front/bsocial-front/node_modules/
 back/node_modules/
+
+back/.env
