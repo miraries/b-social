@@ -89,7 +89,7 @@ User.prototype.toJSON = function () {
 
 User.prototype.token = function () {
     const payload = {
-        exp: moment().add(1440, 'minutes').unix(),
+        exp: moment().add(process.env.JWT_TTL, 'minutes').unix(),
         iat: moment().unix(),
         sub: this.id,
     };

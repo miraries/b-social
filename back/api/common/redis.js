@@ -25,7 +25,7 @@ const revoke = function (key) {
 
     return new Promise((resolve, reject) => {
         client.hmset(prefixedKey, 'revoked', 'true', function (err, res) {
-            client.expire(prefixedKey, 1440);
+            client.expire(prefixedKey, process.env.JWT_TTL * 60);
             if(err) reject(err)
             else resolve(res)
         });
