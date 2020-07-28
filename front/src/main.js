@@ -6,6 +6,8 @@ import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 
+import './plugins/socket-io'
+
 new Vue({
   router,
   store,

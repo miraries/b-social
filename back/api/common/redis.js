@@ -4,6 +4,9 @@ const host = process.env.REDIS_HOST || '127.0.0.1';
 const port = process.env.REDIS_PORT || 6379;
 
 let client = redis.createClient(port, host, {});
+client.on('connect', function() {
+    console.log('Redis client connected');
+});
 client.on('error', console.log);
 
 const prefixKey = key => 'jwt-blacklist:' + key

@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const {models} = require('../../db');
 const validators = require('../validations/comment.validations');
+const {sendMessage, TOPIC} = require('../common/kafka')
 
 const index = async function (req, res, next) {
     const post = await models.post.findByPk(req.params.id)
@@ -21,6 +22,7 @@ const index = async function (req, res, next) {
 
 const create = async function (req, res, next) {
     const post = await models.post.findByPk(req.params.id)
+    const {user} = req
 
     if (!post) {
         res.status(httpStatus.NOT_FOUND)
@@ -39,8 +41,13 @@ const create = async function (req, res, next) {
         ...value
     }).save();
 
+    await sendMessage({
+        comment,
+        user
+    }, TOPIC.COMMENTS)
+
     res.status(httpStatus.CREATED)
-    return res.json({user: req.user, ...comment.toJSON()})
+    return res.json({user, ...comment.toJSON()})
 }
 
 const destroy = async function (req, res, next) {

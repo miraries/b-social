@@ -1,6 +1,29 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" :clipped="true" :floating="true" app>
+    <v-navigation-drawer
+      v-model="drawerRight"
+      app
+      right
+    >
+      <v-list>
+        <v-list-item three-line v-for="{ user, comment } in $store.getters.notifications" :key="comment.id">
+          <v-list-item-content>
+            <v-list-item-title class="d-flex">
+              <FollowDialog :user="user" :useBtn="false" class="mr-1"/>
+              <span class="text-wrap">left you a comment</span>
+            </v-list-item-title>
+            <v-list-item-subtitle class="subtitle-2">
+              {{ comment.text }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle class="indigo--text text--lighten-2 text-caption">
+              {{ ago(comment.createdAt) }}
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-navigation-drawer v-model="drawer" clipped floating app>
       <v-list dense>
         <v-list-item :to="{ name: 'home' }">
           <v-list-item-action>
@@ -46,20 +69,18 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>bSocial</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon :light="!$vuetify.theme.dark" style="outline: none">
-        <v-icon @click="toggleDark">mdi-weather-night</v-icon>
+      <v-btn icon :light="!$vuetify.theme.dark" style="outline: none" @click="toggleDark">
+        <v-icon>mdi-weather-night</v-icon>
+      </v-btn>
+      <v-btn icon @click="drawerRight = !drawerRight">
+        <v-icon>{{ drawerRight ? 'mdi-bell' : 'mdi-bell-outline' }}</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-main>
       <router-view/>
     </v-main>
-    <!-- <v-footer
-  color="indigo"
-  app
->
-  <span class="white--text">&copy; 2019</span>
-    </v-footer>-->
+
     <v-snackbar
       v-model="snackbar.visible"
       bottom
@@ -71,10 +92,17 @@
 </template>
 
 <script>
+  import moment from 'moment'
+  import FollowDialog from '@/components/FollowDialog'
+
   export default {
     name: 'FullLayout',
+    components: {
+      FollowDialog
+    },
     data: () => ({
       drawer: null,
+      drawerRight: false,
       lightBarColor: "#5f72d9",
       darkBarColor: "#131a42"
     }),
@@ -82,17 +110,25 @@
       toggleDark() {
         const isDark = this.$vuetify.theme.dark;
         this.$vuetify.theme.dark = !isDark;
-        document
-          .querySelector("meta[name=theme-color]")
-          .setAttribute(
-            "content",
-            isDark ? this.darkBarColor : this.lightBarColor
-          );
+
+        // Use only for PWAs, disabled for this project
+        // document
+        //   .querySelector("meta[name=theme-color]")
+        //   .setAttribute(
+        //     "content",
+        //     isDark ? this.darkBarColor : this.lightBarColor
+        //   );
       },
       async logout() {
         await this.$store.dispatch('logout')
 
         this.$router.push({name: 'login'})
+      },
+      setupSocketIo() {
+        this.$socket.client.open();
+      },
+      ago(timestamp) {
+        return moment(timestamp).fromNow()
       }
     },
     computed: {
@@ -101,6 +137,7 @@
       }
     },
     created() {
+      this.setupSocketIo()
       this.$vuetify.theme.dark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;

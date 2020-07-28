@@ -7,8 +7,8 @@ const PORT = process.env.PORT || 8080;
 async function connectDatabase() {
     try {
         await sequelize.authenticate();
-        await sequelize.sync();
         console.log('Connected to DB');
+        await sequelize.sync();
     } catch (error) {
         console.log('Unable to connect to DB', error.message);
         process.exit(1);

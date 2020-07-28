@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const {models} = require('../../db');
 const validators = require('../validations/post.validations');
+const {sendMessage, TOPIC} = require('../common/kafka')
 
 const index = async function (req, res, next) {
     const all = req.query.all === 'true'
@@ -44,6 +45,11 @@ const create = async function (req, res, next) {
         userId: req.user.id,
         ...value
     }).save();
+
+    await sendMessage({
+        post,
+        user: req.user
+    }, TOPIC.POSTS)
 
     res.status(httpStatus.CREATED)
     return res.json(post)

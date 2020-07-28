@@ -93,6 +93,12 @@ User.prototype.passwordMatches = async function (password) {
     return bcrypt.compare(password, this.password);
 }
 
+User.prototype.removePassword = function () {
+    const {password, ...user} = this.dataValues
+
+    return user
+}
+
 User.prototype.token = function () {
     const payload = {
         exp: moment().add(process.env.JWT_TTL, 'minutes').unix(),

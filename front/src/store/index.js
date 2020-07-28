@@ -13,12 +13,14 @@ export default new Vuex.Store({
       type: '',
       text: '',
       visible: false
-    }
+    },
+    notifications: []
   },
   getters: {
     user: state => state.user,
     token: state => state.token,
-    check: state => state.user !== null
+    check: state => state.user !== null,
+    notifications: state => state.notifications.reverse()
   },
   mutations: {
     saveToken(state, {token, remember}) {
@@ -38,6 +40,9 @@ export default new Vuex.Store({
       state.global_snackbar.type = type;
       state.global_snackbar.text = text;
       state.global_snackbar.visible = true;
+    },
+    addCommentNotification(state, message) {
+      state.notifications.push(message)
     }
   },
   actions: {
@@ -66,6 +71,11 @@ export default new Vuex.Store({
       commit('setGlobalSnackbar', {
         type: 'info', text: 'Logged out'
       })
+    },
+
+    socket_commentNotification({ commit }, notification) {
+      console.log('notification')
+      commit('addCommentNotification', notification);
     }
   },
   modules: {}

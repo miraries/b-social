@@ -1,0 +1,23 @@
+{
+  "name": "ws-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ivan Kotlaja",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^7.0.2",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "kafkajs": "^1.12.0",
+    "passport-jwt": "^4.0.0",
+    "passport-jwt.socketio": "^0.1.1",
+    "passport.socketio": "^3.7.0",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
+  }
+}
