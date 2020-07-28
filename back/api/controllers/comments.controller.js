@@ -43,6 +43,7 @@ const create = async function (req, res, next) {
 
     await sendMessage({
         comment,
+        post,
         user
     }, TOPIC.COMMENTS)
 
