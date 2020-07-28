@@ -24,7 +24,6 @@ const isFollowing = async function (req, res, next) {
         return res.json({error: 'No user with that id'});
     }
 
-    console.log({followable, follower})
     if (followable.id === follower.id) {
         res.status(httpStatus.CONFLICT)
         return res.json({message: 'You cannot follow yourself'})
