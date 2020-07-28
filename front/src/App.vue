@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <loading ref="loading" />
+    <loading ref="loading"/>
 
     <transition name="page" mode="out-in">
-      <component :is="layout" v-if="layout" />
+      <component :is="layout" v-if="layout"/>
     </transition>
   </div>
 </template>
@@ -31,7 +31,8 @@
       defaultLayout: 'default'
     }),
     metaInfo() {
-      const {appName} = 'bSocial'
+      const appName = 'bSocial'
+
       return {
         title: appName,
         titleTemplate: `%s · ${appName}`
@@ -55,3 +56,11 @@
     }
   }
 </script>
+
+<style>
+  * {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+</style>
