@@ -8,6 +8,7 @@ export default [
   { path: '/home', name: 'home', component: page('feed.vue') },
   { path: '/', component: page('feed.vue'), alias: 'home' },
 
+  { path: '/create_post', name: 'createPost', component: page('create_post.vue') },
   { path: '/feed', name: 'filteredFeed', component: page('filtered_feed.vue') },
   { path: '/user_feed/:id', name: 'userFeed', component: page('user_feed.vue') },
   

@@ -74,7 +74,7 @@ export default new Vuex.Store({
     },
 
     socket_commentNotification({commit}, notification) {
-      console.log('notification')
+      console.log('[notification-socket]', {notification})
       commit('addCommentNotification', notification);
       commit('setGlobalSnackbar', {
         type: 'pink', text: 'You have a new notification!'

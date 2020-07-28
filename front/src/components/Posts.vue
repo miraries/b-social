@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col md="6" class="">
         <transition-group name="fade">
-          <Post v-for="post in posts" :postData="post" :key="post.id" class="mb-6"/>
+          <Post v-for="post in sortedPosts" :postData="post" :key="post.id" class="mb-6"/>
         </transition-group>
       </v-col>
     </v-row>
@@ -44,6 +44,9 @@
     computed: {
       end() {
         return this.page * 5 >= this.posts.length
+      },
+      sortedPosts() {
+        return this.posts.slice().reverse()
       }
     },
     methods: {

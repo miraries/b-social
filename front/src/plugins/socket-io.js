@@ -18,8 +18,4 @@ socket.on('connect', () => {
   console.log('[notifications-socket] connected')
 });
 
-socket.on('comment_notification', function () {
-    console.log('COMMENT NOTIFICATION WOLOLOLO')
-});
-
 Vue.use(VueSocketIOExt, socket, { store });

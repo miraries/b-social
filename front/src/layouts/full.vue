@@ -48,6 +48,14 @@
             <v-list-item-title>Your feed</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item :to="{ name: 'createPost' }">
+          <v-list-item-action>
+            <v-icon>mdi-comment-text</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>New post</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item>
           <v-list-item-action>
             <v-icon>mdi-comment-text-multiple</v-icon>
@@ -74,7 +82,11 @@
       dark
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>bSocial</v-toolbar-title>
+      <v-toolbar-title>bSocial · 
+        <span class="font-weight-bold">
+          {{ $store.getters.user.name }}
+        </span>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon :light="!$vuetify.theme.dark" style="outline: none" @click="toggleDark">
         <v-icon>mdi-weather-night</v-icon>
