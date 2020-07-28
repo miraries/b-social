@@ -1,0 +1,30 @@
+dist: bionic
+language: node_js
+node_js:
+  - lts/*
+
+cache:
+  directories:
+    - "$HOME/.npm"
+
+matrix:
+  fast_finish: true
+  include:
+    - env: backend
+      before_script:
+        - cd ${TRAVIS_BUILD_DIR}/back
+        - npm install
+      script:
+        - npm test
+    - env: frontend
+      before_script:
+        - cd ${TRAVIS_BUILD_DIR}/front
+        - npm install
+      script:
+        - npm run test:unit
+        - npm run build
+
+branches:
+  only:
+  - master
+  - feature-ci
