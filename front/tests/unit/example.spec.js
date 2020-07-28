@@ -1,12 +1,20 @@
 import { shallowMount } from '@vue/test-utils'
-import HelloWorld from '@/components/HelloWorld.vue'
+import Comment from '@/components/Comment.vue'
 
-describe('HelloWorld.vue', () => {
+describe('Comment.vue', () => {
   it('renders props.msg when passed', () => {
-    const msg = 'new message'
-    const wrapper = shallowMount(HelloWorld, {
-      propsData: { msg }
-    })
-    expect(wrapper.text()).toMatch(msg)
+    const commentData = {
+      id: 1,
+      userId: 1,
+      text: 'Comment text',
+      createdAt: '2020-07-27T18:58:02.809Z',
+      updatedAt: '2020-07-27T18:58:02.809Z',
+      user: {
+        name: 'Pero'
+      }
+    }
+    const wrapper = shallowMount(Comment, { propsData: {commentData} })
+    expect(wrapper.text()).toContain(commentData.user.name)
+    expect(wrapper.text()).toContain(commentData.text)
   })
 })
