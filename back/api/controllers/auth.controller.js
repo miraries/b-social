@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const moment = require('moment-timezone ');
+const moment = require('moment-timezone');
 const { models } = require('../../db');
 const { revoke } = require("../common/redis")
 const { sendMessage, TOPIC } = require('../common/kafka')

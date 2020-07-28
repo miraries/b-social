@@ -1,8 +1,8 @@
 const httpStatus = require('http-status');
-const {models} = require('../../db');
+const {models: {user}} = require('../../db');
 
 const index = async function (req, res, next) {
-    const users = await models.user.findAll();
+    const users = await user.findAll();
 
     return res.json(users)
 }
@@ -16,7 +16,7 @@ const show = async function (req, res, next) {
 }
 
 const isFollowing = async function (req, res, next) {
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await user.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {
@@ -24,6 +24,7 @@ const isFollowing = async function (req, res, next) {
         return res.json({error: 'No user with that id'});
     }
 
+    console.log({followable, follower})
     if (followable.id === follower.id) {
         res.status(httpStatus.CONFLICT)
         return res.json({message: 'You cannot follow yourself'})
@@ -33,7 +34,7 @@ const isFollowing = async function (req, res, next) {
 }
 
 const follow = async function (req, res, next) {
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await user.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {
@@ -59,7 +60,7 @@ const follow = async function (req, res, next) {
 }
 
 const unfollow = async function (req, res, next) { //TODO: Refactor
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await user.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {
