@@ -21,7 +21,7 @@ matrix:
         - cd ${TRAVIS_BUILD_DIR}/front
         - npm install
       script:
-        - npm test:unit
+        - npm run test:unit
         - npm run build
 
 branches:
