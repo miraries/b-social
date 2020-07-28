@@ -25,19 +25,20 @@ const findSocketByUserId = function (nsp, id) {
 const getUserId = client => client.handshake.user ? client.handshake.user.id : null
 
 const handleKafkaMessage = function (message) {
-    const comment = JSON.parse(message.value.toString())
+    const messageData = JSON.parse(message.value.toString())
 
-    const [socket] = findSocketByUserId(io.nsps['/'], 6)
+    const [socket] = findSocketByUserId(io.nsps['/'], messageData.post.userId)
 
-    console.log(socket)
+    console.log({messageData, socket: !!socket})
 
+    //TODO: Check if same user
     if (!socket) {
         console.log('Got notification, user not connected, skipping')
         return
     }
 
-    console.log('Got notification, user connected, sending', comment)
-    socket.emit('comment_notification', comment);
+    console.log('Got notification, user connected, sending', messageData)
+    socket.emit('comment_notification', messageData);
 }
 
 io.use(passportJwtSocketIo.authorize(options, verify))
