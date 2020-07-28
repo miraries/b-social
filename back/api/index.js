@@ -18,7 +18,7 @@ const passportMiddleware = passport.authenticate('jwt', {session: false});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('common'));
-app.use(helmet());
+// app.use(helmet());
 // app.use(cors({ origin: process.env.CORS_ORIGIN}));
 
 app.use(passport.initialize());

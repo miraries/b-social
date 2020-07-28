@@ -8,3 +8,5 @@ back/.env
 ws-microservice/node_modules/
 
 ws-microservice/.env
+
+kafka-es-microservice/node_modules/
