@@ -1,0 +1,117 @@
+version: '3.3'
+services:
+
+  db:
+    image: mysql:8.0.21
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'bsocial'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - net
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
+    networks:
+      - net
+
+  redis:
+    image: redis:6.0.6-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - net
+
+  frontend:
+    image: miraries/bsocial-frontend
+    ports:
+      - 8080:80
+    networks:
+      - net
+
+  backend:
+    image: miraries/bsocial-api
+    ports:
+      - 8000:8000
+    networks:
+      - net
+    environment:
+      JWT_SECRET: 'CHANGE_SECRET'
+      JWT_TTL: 1440
+
+  ws-microservice:
+    image: miraries/bsocial-ws
+    ports:
+      - 8002:8002
+    networks:
+      - net
+
+  es-microservice:
+    image: miraries/bsocial-es
+    networks:
+      - net
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - net
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_CREATE_TOPICS: "bsocial-posts:1:1,bsocial-comments:1:1,bsocial-registrations:1:1,bsocial-logins:1:1"
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.1.7
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    volumes:
+      - my-es:/usr/share/elasticsearch/data
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+    logging:
+      driver: none
+    ports:
+      - 9300:9300
+      - 9200:9200
+    networks:
+      - net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+#    volumes:
+#      - ./kibana/config/:/opt/kibana/config/
+    ports:
+      - "5601:5601"
+    networks:
+      - net
+
+networks:
+  net:
+
+volumes:
+  my-db:
+  my-es:
