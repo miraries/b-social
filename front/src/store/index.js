@@ -1,14 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Cookies from 'js-cookie'
-import axios from 'axios'
+import axios from '../plugins/axios'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     user: null,
-    token: Cookies.get('token')
+    token: Cookies.get('token'),
+    global_snackbar: {
+      type: '',
+      text: '',
+      visible: false
+    }
   },
   getters: {
     user: state => state.user,
@@ -20,16 +25,19 @@ export default new Vuex.Store({
       state.token = token
       Cookies.set('token', token, {expires: remember ? 365 : null})
     },
-
+    updateUser(state, {user}) {
+      state.user = user
+    },
     logout(state) {
       state.user = null
       state.token = null
 
       Cookies.remove('token')
     },
-
-    updateUser(state, {user}) {
-      state.user = user
+    setGlobalSnackbar(state, {type, text}) {
+      state.global_snackbar.type = type;
+      state.global_snackbar.text = text;
+      state.global_snackbar.visible = true;
     }
   },
   actions: {
@@ -55,6 +63,9 @@ export default new Vuex.Store({
       }
 
       commit('logout')
+      commit('setGlobalSnackbar', {
+        type: 'info', text: 'Logged out'
+      })
     }
   },
   modules: {}

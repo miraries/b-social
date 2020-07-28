@@ -2,10 +2,10 @@
   <div>
     <v-row>
       <v-col md="3" offset="3" class="mt-3">
-        <h1>Public feed</h1>
+        <h1>Your feed</h1>
       </v-col>
     </v-row>
-    <Posts :all="true"/>
+    <Posts :all="false"/>
   </div>
 </template>
 

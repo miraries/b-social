@@ -5,9 +5,11 @@ function page (path) {
 export default [
   // { path: '/', name: 'welcome', component: page('welcome.vue') },
 
-  { path: '/feed', name: 'feed', component: page('feed.vue') },
-  { path: '/', component: page('feed.vue'), alias: 'feed' },
-  { path: '/feed/user/:id', name: 'userFeed', component: page('user_feed.vue') },
+  { path: '/home', name: 'home', component: page('feed.vue') },
+  { path: '/', component: page('feed.vue'), alias: 'home' },
+
+  { path: '/feed', name: 'filteredFeed', component: page('filtered_feed.vue') },
+  { path: '/user_feed/:id', name: 'userFeed', component: page('user_feed.vue') },
   
   { path: '/login', name: 'login', component: page('login.vue') },
   { path: '/register', name: 'register', component: page('register.vue') },

@@ -18,20 +18,20 @@ axios.interceptors.response.use(response => response, error => {
 
   if (status >= 500) {
     Swal.fire({
-      type: 'error',
+      icon: 'error',
       title: 'Server error',
       text: 'Try again later'
     })
   }
 
-  if (status === 401 && store.getters['auth/check']) {
+  if (status === 401 && store.getters.check) {
     Swal.fire({
-      type: 'warning',
+      icon: 'warning',
       title: 'Session expired',
       text: 'Please login to continue',
       confirmButtonText: 'Login',
     }).then(() => {
-      store.commit('auth/LOGOUT')
+      store.commit('logout')
 
       router.push({ name: 'login' })
     })
@@ -39,3 +39,5 @@ axios.interceptors.response.use(response => response, error => {
 
   return Promise.reject(error)
 })
+
+export default axios;
