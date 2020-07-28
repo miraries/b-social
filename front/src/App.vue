@@ -1,32 +1,66 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <loading ref="loading"/>
+
+    <transition name="page" mode="out-in">
+      <component :is="layout" v-if="layout"/>
+    </transition>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+  import Loading from '@/components/Loading'
+  // Load layout components dynamically.
+  const requireContext = require.context('@/layouts', false, /.*\.vue$/)
+  const layouts = requireContext.keys()
+    .map(file =>
+      [file.replace(/(^.\/)|(\.vue$)/g, ''), requireContext(file)]
+    )
+    .reduce((components, [name, component]) => {
+      components[name] = component.default || component
+      return components
+    }, {})
 
-#nav {
-  padding: 30px;
+  export default {
+    el: '#app',
+    components: {
+      Loading
+    },
+    data: () => ({
+      layout: null,
+      defaultLayout: 'default'
+    }),
+    metaInfo() {
+      const appName = 'bSocial'
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+      return {
+        title: appName,
+        titleTemplate: `%s · ${appName}`
+      }
+    },
+    mounted() {
+      this.$loading = this.$refs.loading
+    },
+    methods: {
+      /**
+       * Set the application layout.
+       *
+       * @param {String} layout
+       */
+      setLayout(layout) {
+        if (!layout || !layouts[layout]) {
+          layout = this.defaultLayout
+        }
+        this.layout = layouts[layout]
+      }
     }
   }
-}
+</script>
+
+<style>
+  * {
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 </style>

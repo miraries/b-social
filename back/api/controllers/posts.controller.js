@@ -1,28 +1,27 @@
 const httpStatus = require('http-status');
 const {models} = require('../../db');
 const validators = require('../validations/post.validations');
+const {sendMessage, TOPIC} = require('../common/kafka')
 
 const index = async function (req, res, next) {
     const all = req.query.all === 'true'
     const page = req.query.page || 0
 
-    const scope = all ? {} : {
+    const scope = all ? {
+        method: ['withRelations', req.user.id],
+    } : {
         method: ['fromFollowed', req.user.id],
     };
 
-    const {count, rows} = await models.post
+    const result = await models.post
         .scope(scope)
         .findAndCountAll({
+            order: [['createdAt', 'DESC']],
             offset: page * 5,
             limit: 5,
-            raw: true,
-            nest: true
         });
 
-    return res.json({
-        count,
-        data: all ? rows : rows.map(({user, ...post}) => post)
-    });
+    return res.json({data: result.rows, count: result.count});
 }
 
 const show = async function (req, res, next) {
@@ -47,6 +46,11 @@ const create = async function (req, res, next) {
         userId: req.user.id,
         ...value
     }).save();
+
+    await sendMessage({
+        post,
+        user: req.user
+    }, TOPIC.POSTS)
 
     res.status(httpStatus.CREATED)
     return res.json(post)

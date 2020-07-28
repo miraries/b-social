@@ -18,19 +18,20 @@ const passportMiddleware = passport.authenticate('jwt', {session: false});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('common'));
-app.use(helmet());
+// app.use(helmet());
 // app.use(cors({ origin: process.env.CORS_ORIGIN}));
 
 app.use(passport.initialize());
 passport.use('jwt', strategyFactory());
 app.use(tokenRevoked);
 
+app.get('/api', (req, res) => res.json({ok: true}));
 app.use('/api/auth', auth);
 app.use('/api/posts', passportMiddleware, posts);
 app.use('/api/users', passportMiddleware, user);
 
 // Subroutes
-app.use('/api/', passportMiddleware, comments);
+app.use('/api', passportMiddleware, comments);
 
 app.use(notFound)
 app.use(printStack)

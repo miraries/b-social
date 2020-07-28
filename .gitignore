@@ -4,3 +4,11 @@ front/bsocial-front/node_modules/
 back/node_modules/
 
 back/.env
+
+ws-microservice/node_modules/
+
+ws-microservice/.env
+
+kafka-es-microservice/node_modules/
+
+kafka-es-microservice/.env
