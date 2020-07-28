@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const {models} = require('../../db');
+const {Post} = require('../db/models');
 const validators = require('../validations/post.validations');
 const {sendMessage, TOPIC} = require('../common/kafka')
 
@@ -13,7 +13,7 @@ const index = async function (req, res, next) {
         method: ['fromFollowed', req.user.id],
     };
 
-    const result = await models.post
+    const result = await Post
         .scope(scope)
         .findAndCountAll({
             order: [['createdAt', 'DESC']],
@@ -25,7 +25,7 @@ const index = async function (req, res, next) {
 }
 
 const show = async function (req, res, next) {
-    const post = await models.post.findByPk(req.params.id, {include: 'comments'})
+    const post = await Post.findByPk(req.params.id, {include: 'comments'})
 
     if (!post) {
         res.status(httpStatus.NOT_FOUND)
@@ -42,7 +42,7 @@ const create = async function (req, res, next) {
         return res.json(error);
     }
 
-    const post = await new models.post({
+    const post = await new Post({
         userId: req.user.id,
         ...value
     }).save();
@@ -57,7 +57,7 @@ const create = async function (req, res, next) {
 }
 
 const destroy = async function (req, res, next) {
-    const post = await models.post.findByPk(req.params.id)
+    const post = await Post.findByPk(req.params.id)
 
     if (!post) {
         res.status(httpStatus.NOT_FOUND)

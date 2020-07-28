@@ -1,14 +1,15 @@
 require('dotenv').config()
-const sequelize = require('./db');
+const sequelize = require('./api/db/models');
 const express = require('./api');
 
 const PORT = process.env.PORT || 8080;
 
 async function connectDatabase() {
     try {
-        await sequelize.authenticate();
+        // await sequelize.authenticate();
         console.log('Connected to DB');
-        await sequelize.sync();
+        // await sequelize.sync();
+        // console.log(sequelize)
     } catch (error) {
         console.log('Unable to connect to DB', error.message);
         process.exit(1);

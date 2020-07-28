@@ -1,17 +1,17 @@
 const httpStatus = require('http-status');
-const {models} = require('../../db');
+const {Post, Comment} = require('../db/models');
 const validators = require('../validations/comment.validations');
 const {sendMessage, TOPIC} = require('../common/kafka')
 
 const index = async function (req, res, next) {
-    const post = await models.post.findByPk(req.params.id)
+    const post = await Post.findByPk(req.params.id)
 
     if (!post) {
         res.status(httpStatus.NOT_FOUND)
         return res.json({error: 'No post with that id'});
     }
 
-    const comments = await models.comment.findAll({
+    const comments = await Comment.findAll({
         where: {
             postId: post.id
         }
@@ -21,7 +21,7 @@ const index = async function (req, res, next) {
 }
 
 const create = async function (req, res, next) {
-    const post = await models.post.findByPk(req.params.id)
+    const post = await Post.findByPk(req.params.id)
     const {user} = req
 
     if (!post) {
@@ -35,7 +35,7 @@ const create = async function (req, res, next) {
         return res.json(error);
     }
 
-    const comment = await new models.comment({
+    const comment = await new Comment({
         userId: req.user.id,
         postId: post.id,
         ...value
@@ -52,7 +52,7 @@ const create = async function (req, res, next) {
 }
 
 const destroy = async function (req, res, next) {
-    const comment = await models.comment.findByPk(req.params.id)
+    const comment = await Comment.findByPk(req.params.id)
 
     if (!comment) {
         res.status(httpStatus.NOT_FOUND)

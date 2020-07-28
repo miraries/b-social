@@ -1,8 +1,8 @@
 const httpStatus = require('http-status');
-const {models} = require('../../db');
+const {User} = require('../db/models');
 
 const index = async function (req, res, next) {
-    const users = await models.user.findAll();
+    const users = await User.findAll();
 
     return res.json(users)
 }
@@ -16,7 +16,7 @@ const show = async function (req, res, next) {
 }
 
 const isFollowing = async function (req, res, next) {
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await User.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {
@@ -33,7 +33,7 @@ const isFollowing = async function (req, res, next) {
 }
 
 const follow = async function (req, res, next) {
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await User.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {
@@ -59,7 +59,7 @@ const follow = async function (req, res, next) {
 }
 
 const unfollow = async function (req, res, next) { //TODO: Refactor
-    const followable = await models.user.findByPk(req.params.userId)
+    const followable = await User.findByPk(req.params.userId)
     const {user: follower} = req
 
     if (!followable) {

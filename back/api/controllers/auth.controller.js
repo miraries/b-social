@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
-const moment = require('moment-timezone ');
-const { models } = require('../../db');
+const moment = require('moment-timezone');
+const { User } = require('../db/models');
 const { revoke } = require("../common/redis")
 const { sendMessage, TOPIC } = require('../common/kafka')
 
@@ -14,7 +14,7 @@ const register = async function (req, res, next) {
             return res.json(error);
         }
 
-        const user = await new models.user(value).save();
+        const user = await new User(value).save();
         const token = user.token()
 
         await sendMessage({
@@ -36,7 +36,7 @@ const register = async function (req, res, next) {
 
 const login = async function (req, res, next) {
     try {
-        const { user, token } = await models.user.findAndGenerateToken(req.body);
+        const { user, token } = await User.findAndGenerateToken(req.body);
 
         await sendMessage({
             user,
