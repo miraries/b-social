@@ -12,7 +12,7 @@
               Notifications
             </v-list-item-title>
             <span class="subtitle-1">
-              <span>{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
+              <span @click="setupSocketIo">{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
             </span>
           </v-list-item-content>
         </v-list-item>
