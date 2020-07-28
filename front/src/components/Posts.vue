@@ -46,7 +46,7 @@
         return this.page * 5 >= this.posts.length
       },
       sortedPosts() {
-        return this.posts.slice().reverse()
+        return this.posts
       }
     },
     methods: {

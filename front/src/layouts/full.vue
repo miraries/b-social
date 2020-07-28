@@ -11,6 +11,9 @@
             <v-list-item-title class="font-weight-medium text-h5">
               Notifications
             </v-list-item-title>
+            <span class="subtitle-1">
+              <span>{{ $socket.connected ? 'Connected' : 'Disconnected' }}</span>
+            </span>
           </v-list-item-content>
         </v-list-item>
         <v-list-item three-line v-for="{ user, comment } in $store.getters.notifications" :key="comment.id">

@@ -105,6 +105,7 @@
           })
 
           this.$router.push({name: 'home'})
+          this.$socket.client.open();
         } catch (error) {
           this.error = error.response.data.error
         }
