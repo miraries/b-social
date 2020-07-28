@@ -25,6 +25,7 @@ app.use(passport.initialize());
 passport.use('jwt', strategyFactory());
 app.use(tokenRevoked);
 
+app.get('/api', (req, res) => res.json({ok: true}));
 app.use('/api/auth', auth);
 app.use('/api/posts', passportMiddleware, posts);
 app.use('/api/users', passportMiddleware, user);
