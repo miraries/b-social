@@ -4,8 +4,6 @@ const io = require('socket.io')(server);
 const passportJwtSocketIo = require('passport-jwt.socketio');
 const {ExtractJwt} = require('passport-jwt');
 const {setupConsumer, start} = require('./kafka');
-const {inspect} = require('util')
-
 
 const options = {
     jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
@@ -56,8 +54,7 @@ io.on('connection', client => {
     server.listen(port || 8002);
     await start()
     await setupConsumer(handleKafkaMessage)
-    // setInterval(() => console.log('all', findSocketByUserId(io.nsps['/'], null)), 5000)
-    // setInterval(() => console.log('userid', findSocketByUserId(io.nsps['/'], 6)), 5000)
+
     console.log(`Web socket service running, listening on port ${port}`)
 })()
 

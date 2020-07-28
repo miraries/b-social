@@ -5,12 +5,12 @@ const createClient = function () {
     const port = process.env.KAFKA_PORT || 9092
 
     return new Kafka({
-        clientId: 'backend',
+        clientId: 'ws-microservice',
         brokers: [`${host}:${port}`]
     })
 }
 
-const errorHandler = e => console.error(`[backend/producer] ${e.message}`, e)
+const errorHandler = e => console.error(`[ws-microservice/consumer] ${e.message}`, e)
 const logMessage = ({partition, message}) => console.log({
     partition,
     offset: message.offset,
