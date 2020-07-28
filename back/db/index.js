@@ -136,22 +136,11 @@ Post.addScope('withRelations', userId => ({
     include: [User, {model: Comment, include: User}]
 }));
 
-// F*** this, I'm never using sequelize again
-// Post.addScope('withFollowed', userId => ({
-//     include: [{
-//         model: User,
-//         include: {
-//             model: User,
-//             as: 'followers',
-//             through: {attributes: []},
-//             attributes: []
-//         },
-//         attributes: ['id','name','email','createdAt',
-//             [sequelize.fn('COUNT', sequelize.col('user.followers.id')), 'following']
-//         ],
-//         duplicating: false
-//     }],
-//     group : ['post.id', 'user.followers.id'],
-// }));
+User.addScope('getAllInfo', function () {
+    return {
+        include: [{model: Post, include: Comment}],
+        attributes: {exclude: ['password']}
+    }
+})
 
 module.exports = sequelize;

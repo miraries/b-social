@@ -41,10 +41,15 @@ const create = async function (req, res, next) {
         ...value
     }).save();
 
+    const newUserIndex = await models.user
+        .scope('getAllInfo')
+        .findByPk(req.user.id)
+
     await sendMessage({
         comment,
         post,
-        user
+        user,
+        newUser: newUserIndex
     }, TOPIC.COMMENTS)
 
     res.status(httpStatus.CREATED)

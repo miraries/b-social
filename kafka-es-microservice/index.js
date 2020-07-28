@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { setupConsumer, start } = require('./src/kafka');
 const { Client } = require('@elastic/elasticsearch')
+const { putMapping, indexDataNew } = require('./src/newIndex')
 
 let client = null
 
@@ -35,7 +36,8 @@ const handleKafkaMessage = function (topic, message) {
     const index = topicToIndex(topic)
     console.log('Indexing data', {index, body})
 
-    indexData(index, body)
+    indexData(index, body).then(res => console.log(res)).catch(err => console.error(err))
+    indexDataNew(client, data).then(res => console.log(res)).catch(err => console.error(err))
 }
 
 
@@ -46,5 +48,7 @@ const handleKafkaMessage = function (topic, message) {
     client = await createElasticsearchClient()
     console.log(`Elasticsearch client connected`)
     console.log(`Kafka-to-elasticsearch indexing service running`)
+
+    await putMapping(client)
 })()
 
