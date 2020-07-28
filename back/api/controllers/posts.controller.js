@@ -1,30 +1,25 @@
 const httpStatus = require('http-status');
 const {models} = require('../../db');
 const validators = require('../validations/post.validations');
-const { Op } = require("sequelize");
-
 
 const index = async function (req, res, next) {
-    const rows = await models.post
-    .findAll({
-        attributes: {
-            include: {
-                model: models.user,
-                include: {
-                    model: models.user,
-                    as: 'followers',
-                    required: true
-                },
-            }
-        }
-    });
+    const all = req.query.all === 'true'
+    const page = req.query.page || 0
 
-    return res.json({rows});
+    const scope = all ? {
+        method: ['withRelations', req.user.id],
+    } : {
+        method: ['fromFollowed', req.user.id],
+    };
 
-    return res.json({
-        count,
-        data: all ? rows : rows.map(({user, ...post}) => post)
-    });
+    const result = await models.post
+        .scope(scope)
+        .findAndCountAll({
+            offset: page * 5,
+            limit: 5,
+        });
+
+    return res.json({data: result.rows, count: result.count});
 }
 
 const show = async function (req, res, next) {

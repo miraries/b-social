@@ -6,7 +6,7 @@ const validators = require('../validations/auth.validations');
 
 const register = async function (req, res, next) {
     try {
-        const { error, value } = validators.register.validate(req.body)
+        const { error, value } = validators.register.validate(req.body, {abortEarly: false})
         if (error) {
             res.status(httpStatus.BAD_REQUEST)
             return res.json(error);

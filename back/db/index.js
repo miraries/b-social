@@ -28,6 +28,10 @@ const User = sequelize.define('user', {
         type: DataTypes.STRING,
         unique: true
     }
+}, {
+    defaultScope: {
+        attributes: {exclude: ['password']},
+    }
 });
 
 const Post = sequelize.define('post', {
@@ -42,6 +46,10 @@ const Comment = sequelize.define('comment', {
         allowNull: false,
         type: DataTypes.TEXT
     }
+}, {
+    defaultScope: {
+        include: User
+    }
 });
 
 const foreignKeyOption = {
@@ -50,7 +58,11 @@ const foreignKeyOption = {
     }
 }
 
-const UserFollow = sequelize.define('UserFollow');
+const UserFollow = sequelize.define('UserFollow', {}, {
+    defaultScope: {
+        attributes: {exclude: ['password']},
+    }
+});
 
 User.hasMany(Post, foreignKeyOption);
 Post.belongsTo(User);
@@ -61,13 +73,13 @@ Comment.belongsTo(Post);
 User.hasMany(Comment, foreignKeyOption);
 Comment.belongsTo(User);
 
-User.belongsToMany(User, {as: 'followers', through: UserFollow, foreignKey: 'followedId'})
 User.belongsToMany(User, {as: 'following', through: UserFollow, foreignKey: 'followerId'})
+User.belongsToMany(User, {as: 'followers', through: UserFollow, foreignKey: 'followedId'})
 
 User.findAndGenerateToken = async function (options) {
     const {email, password} = options;
 
-    const user = await this.findOne({where: {email}});
+    const user = await this.findOne({where: {email}, attributes: {include: ['password']}});
     let message = ''
 
     if (user && await user.passwordMatches(password)) {
@@ -79,12 +91,6 @@ User.findAndGenerateToken = async function (options) {
 
 User.prototype.passwordMatches = async function (password) {
     return bcrypt.compare(password, this.password);
-}
-
-User.prototype.toJSON = function () {
-    const {password, ...user} = this.dataValues
-
-    return user
 }
 
 User.prototype.token = function () {
@@ -105,7 +111,7 @@ Post.prototype.isByFollowed = function (userId) {
 };
 
 Post.addScope('fromFollowed', userId => ({
-    include: {
+    include: [{
         model: User,
         include: {
             model: User,
@@ -113,10 +119,33 @@ Post.addScope('fromFollowed', userId => ({
             where: {
                 id: userId
             },
-            through: {attributes: []}
+            through: {attributes: []},
+            attributes: []
         },
         required: true
-    }
+    }, {model: Comment, include: User}]
 }));
+
+Post.addScope('withRelations', userId => ({
+    include: [User, {model: Comment, include: User}]
+}));
+
+// F*** this, I'm never using sequelize again
+// Post.addScope('withFollowed', userId => ({
+//     include: [{
+//         model: User,
+//         include: {
+//             model: User,
+//             as: 'followers',
+//             through: {attributes: []},
+//             attributes: []
+//         },
+//         attributes: ['id','name','email','createdAt',
+//             [sequelize.fn('COUNT', sequelize.col('user.followers.id')), 'following']
+//         ],
+//         duplicating: false
+//     }],
+//     group : ['post.id', 'user.followers.id'],
+// }));
 
 module.exports = sequelize;

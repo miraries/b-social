@@ -31,7 +31,7 @@ app.use('/api/posts', passportMiddleware, posts);
 app.use('/api/users', passportMiddleware, user);
 
 // Subroutes
-app.use('/api/', passportMiddleware, comments);
+app.use('/api', passportMiddleware, comments);
 
 app.use(notFound)
 app.use(printStack)

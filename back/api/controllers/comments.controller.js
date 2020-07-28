@@ -20,7 +20,7 @@ const index = async function (req, res, next) {
 }
 
 const create = async function (req, res, next) {
-    const post = await models.post.findByPk(req.params.postId)
+    const post = await models.post.findByPk(req.params.id)
 
     if (!post) {
         res.status(httpStatus.NOT_FOUND)
@@ -40,7 +40,7 @@ const create = async function (req, res, next) {
     }).save();
 
     res.status(httpStatus.CREATED)
-    return res.json(comment)
+    return res.json({user: req.user, ...comment.toJSON()})
 }
 
 const destroy = async function (req, res, next) {
