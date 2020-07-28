@@ -6,6 +6,13 @@
       right
     >
       <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="font-weight-medium text-h5">
+              Notifications
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item three-line v-for="{ user, comment } in $store.getters.notifications" :key="comment.id">
           <v-list-item-content>
             <v-list-item-title class="d-flex">
@@ -87,6 +94,15 @@
       :color="snackbar.type"
       :timeout="5000"
     >{{ snackbar.text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          text
+          v-bind="attrs"
+          @click="snackbar.visible = false"
+        >
+          Close
+        </v-btn>
+      </template>
     </v-snackbar>
   </v-app>
 </template>
