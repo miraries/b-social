@@ -1,13 +1,14 @@
 const httpStatus = require('http-status');
-const {models} = require('../../db');
-const {revoke} = require("../common/redis")
-const {sendMessage, TOPIC} = require('../common/kafka')
+const moment = require('moment-timezone ');
+const { models } = require('../../db');
+const { revoke } = require("../common/redis")
+const { sendMessage, TOPIC } = require('../common/kafka')
 
 const validators = require('../validations/auth.validations');
 
 const register = async function (req, res, next) {
     try {
-        const {error, value} = validators.register.validate(req.body, {abortEarly: false})
+        const { error, value } = validators.register.validate(req.body, { abortEarly: false })
         if (error) {
             res.status(httpStatus.BAD_REQUEST)
             return res.json(error);
@@ -22,11 +23,11 @@ const register = async function (req, res, next) {
         }, TOPIC.REGISTRATIONS)
 
         res.status(httpStatus.CREATED)
-        res.json({user, token});
+        res.json({ user, token });
     } catch (error) {
         if (error.name === 'SequelizeUniqueConstraintError') {
             res.status(httpStatus.BAD_REQUEST);
-            return res.json({error: 'Email already registered'});
+            return res.json({ error: 'Email already registered' });
         }
 
         return next(error);
@@ -35,19 +36,24 @@ const register = async function (req, res, next) {
 
 const login = async function (req, res, next) {
     try {
-        const {user, token} = await models.user.findAndGenerateToken(req.body);
+        const { user, token } = await models.user.findAndGenerateToken(req.body);
 
-        return res.json({user, token});
+        await sendMessage({
+            user,
+            timestamp: moment().format('YYYY-MM-DD')
+        }, TOPIC.LOGINS)
+
+        return res.json({ user, token });
     } catch (error) {
         res.status(httpStatus.UNAUTHORIZED)
-        return res.json({error})
+        return res.json({ error })
     }
 }
 
 const logout = async function (req, res, next) {
     await revoke(req.headers.authorization.replace('Bearer ', ''))
 
-    return res.json({message: 'Logged out successfully'});
+    return res.json({ message: 'Logged out successfully' });
 }
 
 module.exports = {

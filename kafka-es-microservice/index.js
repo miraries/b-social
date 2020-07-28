@@ -8,7 +8,8 @@ const topicToIndex = topic => topic.replace('bsocial-', '')
 const topicKeys = {
     comments: 'comment',
     registrations: 'user',
-    posts: 'post'
+    posts: 'post',
+    logins: false //send full object
 }
 const topicToKey = topic => topicKeys[topicToIndex(topic)]
 
@@ -29,7 +30,8 @@ const indexData = async function (index, body) {
 const handleKafkaMessage = function (topic, message) {
     const data = JSON.parse(message.value.toString())
 
-    const body = data[topicToKey(topic)]
+    const key = topicToKey(topic)
+    const body = key ? data[key] : data
     const index = topicToIndex(topic)
     console.log('Indexing data', {index, body})
 

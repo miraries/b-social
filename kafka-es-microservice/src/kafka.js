@@ -1,6 +1,6 @@
 const {Kafka} = require('kafkajs')
 
-const topics = ['bsocial-comments', 'bsocial-posts', 'bsocial-registrations']
+const topics = ['bsocial-comments', 'bsocial-posts', 'bsocial-registrations', 'bsocial-logins']
 
 const createClient = function () {
     const host = process.env.KAFKA_HOST || 'kafka'

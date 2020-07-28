@@ -3,7 +3,8 @@ const {Kafka} = require('kafkajs')
 const TOPIC = {
     REGISTRATIONS: 'bsocial-registrations',
     POSTS: 'bsocial-posts',
-    COMMENTS: 'bsocial-comments'
+    COMMENTS: 'bsocial-comments',
+    LOGINS: 'bsocial-logins'
 }
 
 const createClient = function () {
