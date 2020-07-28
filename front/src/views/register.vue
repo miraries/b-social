@@ -1,12 +1,12 @@
 <template>
   <div>
-    login
+    register
   </div>
 </template>
 
 <script>
   export default {
-    name: 'Login',
+    name: 'Register',
     middleware: 'guest',
     layout: 'basic'
   }

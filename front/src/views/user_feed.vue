@@ -1,13 +1,13 @@
 <template>
   <div>
-    feed
+    user feed
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Feed',
+  name: 'UserFeed',
   layout: 'full',
   middleware: 'auth'
 }

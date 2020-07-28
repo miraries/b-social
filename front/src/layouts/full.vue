@@ -84,11 +84,7 @@
         </v-app-bar>
 
         <v-content>
-            <v-container fluid>
-                <v-fade-transition mode="out-in">
-                    <router-view />
-                </v-fade-transition>
-            </v-container>
+          <router-view />
         </v-content>
         <!-- <v-footer
       color="indigo"
