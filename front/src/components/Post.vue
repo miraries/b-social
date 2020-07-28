@@ -1,6 +1,7 @@
 <template>
   <v-card
     class="mx-auto"
+    elevation="5"
   >
     <v-card-title>
       <FollowDialog :user="user"/>
@@ -14,12 +15,10 @@
         {{ post.text }}
       </div>
 
-      <v-divider class="mt-6" v-if="showComments"></v-divider>
-
       <AddComment class="mt-6" :postId="post.id" @valid="commentValid = $event" @text="commentText = $event"/>
 
       <transition name="fade">
-        <div v-if="showComments" class="mt-3">
+        <div v-if="showComments">
           <Comment v-for="comment in comments" :commentData="comment" :key="comment.id"/>
         </div>
       </transition>

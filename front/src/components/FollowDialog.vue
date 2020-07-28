@@ -20,9 +20,18 @@
           text
           v-bind="attrs"
           v-on="on"
+          v-if="useBtn"
         >
           {{ user.name }}
         </v-btn>
+        <a
+          class="indigo--text font-weight-medium"
+          v-bind="attrs"
+          v-on="on"
+          v-else
+        >
+          {{ user.name }}
+        </a>
       </template>
 
       <v-card>
@@ -83,6 +92,10 @@
       user: {
         type: Object,
         required: true
+      },
+      useBtn: {
+        type: Boolean,
+        default: true
       }
     },
     data: () => ({
@@ -95,7 +108,7 @@
         return moment(this.user.createdAt).from()
       },
       yourself() {
-        return this.$store.getters.user.id === this.user.id
+        return this.$store.getters?.user?.id === this.user.id
       }
     },
     watch: {

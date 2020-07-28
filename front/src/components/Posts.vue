@@ -1,9 +1,9 @@
 <template>
-  <div class="mt-5 mb-10">
+  <div class="mb-10">
     <v-row justify="center">
       <v-col md="6" class="">
         <transition-group name="fade">
-          <Post v-for="post in posts" :postData="post" :key="post.id" class="mb-4"/>
+          <Post v-for="post in posts" :postData="post" :key="post.id" class="mb-6"/>
         </transition-group>
       </v-col>
     </v-row>
@@ -37,8 +37,9 @@
       loading: true,
       page: 0
     }),
-    created() {
-      this.fetch()
+    async created() {
+      await this.fetch()
+      this.page = 1
     },
     computed: {
       end() {

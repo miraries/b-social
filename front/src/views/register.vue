@@ -150,7 +150,7 @@
 
           Swal.fire(
             'Registered!',
-            'You are autoamtically logged in',
+            'You are automatically logged in',
             'success'
           )
 
