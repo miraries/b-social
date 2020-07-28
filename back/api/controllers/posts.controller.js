@@ -16,6 +16,7 @@ const index = async function (req, res, next) {
     const result = await models.post
         .scope(scope)
         .findAndCountAll({
+            order: [['createdAt', 'DESC']],
             offset: page * 5,
             limit: 5,
         });
