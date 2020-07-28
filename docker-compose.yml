@@ -1,0 +1,61 @@
+version: '3.3'
+services:
+
+  db:
+    image: mysql:8.0.21
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'bsocial'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      - net
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
+    networks:
+      - net
+
+  redis:
+    image: redis:6.0.6-alpine
+    ports:
+      - 6379:6379
+    networks:
+      - net
+
+  frontend:
+    container_name: bsocial-frontend
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    networks:
+      - net
+
+  backend:
+    container_name: bsocial-backend
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - net
+    environment:
+      JWT_SECRET: 'CHANGE_SECRET'
+      JWT_TTL: 1440
+
+networks:
+  net:
+
+volumes:
+  my-db:
