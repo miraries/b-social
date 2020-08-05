@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Ivan Kotlaja",
   "license": "ISC",
@@ -17,6 +19,8 @@
     "passport-jwt": "^4.0.0",
     "passport-jwt.socketio": "^0.1.1",
     "passport.socketio": "^3.7.0",
-    "socket.io": "^2.3.0"
-  }
+    "socket.io": "^2.3.0",
+    "snyk": "^1.369.3"
+  },
+  "snyk": true
 }
